@@ -18,8 +18,10 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import pennylane as qml
-import jax.numpy as jnp
 import multiprocessing as mp
+
+
+
 
 from ansatze import CircuitSpec, build_qnode
 
@@ -498,6 +500,8 @@ if __name__ == '__main__':
             
     st.divider()
 
+    
+
     # --- Read Data Loop ---
     while True:
 
@@ -531,3 +535,11 @@ if __name__ == '__main__':
                     show_legend=True,
                     ylim=ylim
                 )
+        plt.close('all')
+
+
+
+
+
+
+

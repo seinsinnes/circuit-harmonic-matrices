@@ -30,6 +30,11 @@
 #
 # Requirements: numpy, jax, pennylane, tqdm
 
+import os
+# Stop JAX from instantly swallowing 75% of your RAM
+os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
+os.environ["XLA_PYTHON_CLIENT_ALLOCATOR"] = "platform"
+
 import numpy as np
 import jax
 jax.config.update("jax_enable_x64", True)
@@ -53,6 +58,7 @@ def compute_worker(cmd_queue, data_queue):
         elif cmd["action"] == "STOP":
             args = None
             print("[WORKER] Simulation Halted.")
+            break
         elif cmd["action"] == "TERMINATE":
             args = None
             break
@@ -154,7 +160,7 @@ def compute_worker(cmd_queue, data_queue):
                     continue
 
                 theta_batch = rng.uniform(0.0, 2 * np.pi, size=(Bb, m)).astype(np.float64)
-                a_batch = a_batch_fn(theta_batch)  # (Bb, n_omega)
+                a_batch = np.asarray(a_batch_fn(theta_batch))  # (Bb, n_omega)
 
                 # On-the-fly split
                 is_C = rng.random(Bb) < float(args["split_fraction_for_C"])
@@ -340,9 +346,6 @@ def compute_worker(cmd_queue, data_queue):
                             },
                         },
                     }
-
-                    # ---------------- Save ----------------
-                    tag = "corr_matrices_live"
                     
 
                     payload = {
@@ -393,4 +396,3 @@ def compute_worker(cmd_queue, data_queue):
                         data_queue.put_nowait(payload)
                     except queue.Full:
                         pass
-
