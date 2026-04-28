@@ -1,0 +1,8 @@
+streamlit==1.56.0
+pennylane==0.44.1
+jax==0.10.0
+jaxlib==0.10.0
+numpy==2.4.4
+matplotlib==3.10.9
+tqdm==4.67.3
+watchdog==6.0.0
