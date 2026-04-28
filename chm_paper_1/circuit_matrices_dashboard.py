@@ -385,7 +385,9 @@ def generate_circuit_figure(params):
 
 
 def handle_change():
-    st.session_state.cmd_queue.put({"action": "STOP"})
+    if st.session_state.runnning:
+        st.session_state.cmd_queue.put({"action": "STOP"})
+        st.session_state.runnning = False
 
 
 
