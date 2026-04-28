@@ -8,12 +8,12 @@ ENV PYTHONUNBUFFERED=1
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
 # Copy the rest of your application code into the container
 COPY . .
+
+WORKDIR /app/chm_paper_1
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the port Streamlit uses
 EXPOSE 8501
