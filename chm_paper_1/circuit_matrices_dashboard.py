@@ -447,6 +447,7 @@ if __name__ == '__main__':
     ylim=None
 
     st.session_state.runnning = False
+    st.session_state.latest_data = None
 
 
 
@@ -507,36 +508,36 @@ if __name__ == '__main__':
     # --- Read Data Loop ---
     while True:
 
-        latest_data = st.session_state.data_queue.get()
-        st.session_state.latest_data = latest_data
+        st.session_state.latest_data = st.session_state.data_queue.get()
 
         title_prefix = f"n={n_qubits}, L={n_layers}"
         
         with dashboard_placeholder.container():
             col1, col2 = st.columns(2)
-            progress_frac = min(latest_data["current_batch_count"] / latest_data["total_batches"] , 1.0)
-            progress_bar.progress(progress_frac)
-            if st.session_state.runnning:
-                status_text.success(f"Running...")
-            
-            with col1:
-                plot_grid_figure_hermitian(
-                    latest_data, latest_data["omega_grid"], title_prefix,
-                    clip_q=clip_q, omega_phys=omega_phys,
-                    omega_side=omega_side, mask_diag=mask_diag,
-                    support_rel_var=support_rel_var, support_mode=support_mode
-                )
+            if st.session_state.latest_data:
+                progress_frac = min(st.session_state.latest_data["current_batch_count"] / st.session_state.latest_data["total_batches"] , 1.0)
+                progress_bar.progress(progress_frac)
+                if st.session_state.runnning:
+                    status_text.success(f"Running...")
                 
-            with col2:
-                plot_grid(
-                    latest_data,
-                    mode=mode,
-                    omega_phys=omega_phys,
-                    omega_side=omega_side,
-                    show_textbox=True,
-                    show_legend=True,
-                    ylim=ylim
-                )
+                with col1:
+                    plot_grid_figure_hermitian(
+                        st.session_state.latest_data, st.session_state.latest_data["omega_grid"], title_prefix,
+                        clip_q=clip_q, omega_phys=omega_phys,
+                        omega_side=omega_side, mask_diag=mask_diag,
+                        support_rel_var=support_rel_var, support_mode=support_mode
+                    )
+                    
+                with col2:
+                    plot_grid(
+                        st.session_state.latest_data,
+                        mode=mode,
+                        omega_phys=omega_phys,
+                        omega_side=omega_side,
+                        show_textbox=True,
+                        show_legend=True,
+                        ylim=ylim
+                    )
         plt.close('all')
 
 
